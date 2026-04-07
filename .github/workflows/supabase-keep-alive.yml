@@ -8,6 +8,7 @@ on:
 jobs:
   ping:
     runs-on: ubuntu-latest
+    timeout-minutes: 2     # Force-kill the job if it hangs
 
     steps:
       - name: Ping Supabase
@@ -31,12 +32,16 @@ jobs:
 
           const req = https.request(options, (res) => {
             console.log('Ping status:', res.statusCode);
-            if (res.statusCode < 500) {
-              console.log('Supabase is alive!');
-            } else {
-              console.error('Unexpected status, check your project.');
-              process.exit(1);
-            }
+            res.resume(); // Drain the response body
+            res.on('end', () => {
+              if (res.statusCode < 500) {
+                console.log('Supabase is alive!');
+                process.exit(0);
+              } else {
+                console.error('Unexpected status, check your project.');
+                process.exit(1);
+              }
+            });
           });
 
           req.on('error', (e) => {
