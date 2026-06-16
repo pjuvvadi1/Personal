@@ -4,7 +4,7 @@ run: |
           const url = new URL(process.env.SUPABASE_URL);
           const options = {
             hostname: url.hostname,
-            path: '/rest/v1/YOUR_TABLE_NAME?limit=1',
+            path: '/rest/v1/PLAYERS?limit=1',
             method: 'GET',
             headers: {
               'apikey': process.env.SUPABASE_KEY,
